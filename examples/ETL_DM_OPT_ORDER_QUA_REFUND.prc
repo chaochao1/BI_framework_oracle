@@ -3,16 +3,16 @@ create or replace procedure ETL_DM_OPT_ORDER_QUA_REFUND(start_time   date,
                                                         v_etl_number int,
                                                         status_flag  varchar) IS
   /*by sunchao
-  modify by liushaowu 20150513
+  modify by liu 20150513
   */
   v_sql               VARCHAR2(1000);
   v_insert            INT := 0;
   v_update            INT := 0;
   v_delete            INT := 0;
   v_date              date := start_time;
-  day_refund_cnt      int := 0; /*每日退款订单总数*/
-  day_order_cnt       int := 0; /*每日订单总数*/
-  week_refund_qua_cnt int := 0; /*每周退款订单总数*/
+  day_refund_cnt      int := 0; /*每锟斤拷锟剿款订锟斤拷锟斤拷锟斤拷*/
+  day_order_cnt       int := 0; /*每锟秸讹拷锟斤拷锟斤拷锟斤拷*/
+  week_refund_qua_cnt int := 0; /*每锟斤拷锟剿款订锟斤拷锟斤拷锟斤拷*/
   day_refund_qua_cnt  int := 0;
 
   week_cnt        int := 0;
@@ -43,7 +43,7 @@ BEGIN
   
     execute immediate 'truncate table  TMP_DM_ORDER_REFUND_QUA_DAY';
   
-    /*按天统计各原因质量问题*/
+    /*锟斤拷锟斤拷统锟狡革拷原锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷*/
   
     insert into TMP_DM_ORDER_REFUND_QUA_DAY
       (add_date, refund_type, t_refund_cnt)
@@ -77,13 +77,13 @@ BEGIN
      where add_date in (select add_date from TMP_DM_ORDER_REFUND_QUA_DAY);
     commit;
   
-    /*插入线上数据库*/
+    /*锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟捷匡拷*/
     insert into DM_ORDER_REFUND_QUA_DAY
       (add_date, refund_reason, t_refund_cnt)
       select trunc(add_date),
              case
-               when refund_type_reason = '不合适' then
-                '无理由'
+               when refund_type_reason = '锟斤拷锟斤拷锟斤拷' then
+                '锟斤拷锟斤拷锟斤拷'
                else
                 t2.refund_type_reason
              end,
@@ -93,7 +93,7 @@ BEGIN
           on t1.refund_type = t2.id;
     commit;
   
-    /*按周进行统计*/
+    /*锟斤拷锟杰斤拷锟斤拷统锟斤拷*/
   
     select nvl(sum(a.t_refund_cnt), 1)
       into week_cnt
@@ -123,7 +123,7 @@ BEGIN
        refund_cnt,
        refund_rate,
        order_rate)
-      select '质量问题',
+      select '锟斤拷锟斤拷锟斤拷锟斤拷',
              'week',
              c.static_week,
              a.refund_reason,
@@ -136,7 +136,7 @@ BEGIN
        where TO_CHAR(TO_DATE(full_date_key, 'YYYY/MM/DD'), 'IYIW') =
              TO_CHAR(TO_DATE(v_date, 'YYYY/MM/DD'), 'IYIW')
          and extract(year from full_date_key) = extract(year from v_date)
-       group by '质量问题', 'week', c.static_week, a.refund_reason;
+       group by '锟斤拷锟斤拷锟斤拷锟斤拷', 'week', c.static_week, a.refund_reason;
     commit;
   
     delete from DM_ORDER_REFUND_CNT_RATE t1
@@ -149,7 +149,7 @@ BEGIN
   
     commit;
   
-    /*插入线上数据库*/
+    /*锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟捷匡拷*/
   
     insert into DM_ORDER_REFUND_CNT_RATE
       (Problem_type,
@@ -169,7 +169,7 @@ BEGIN
         from TMP_DM_ORDER_REFUND_CNT_RATE;
     commit;
   
-    /*按月进行统计*/
+    /*锟斤拷锟铰斤拷锟斤拷统锟斤拷*/
   
     select nvl(sum(a.t_refund_cnt), 0)
       into month_cnt
@@ -197,7 +197,7 @@ BEGIN
        refund_cnt,
        refund_rate,
        order_rate)
-      select '质量问题',
+      select '璐ㄩ噺闂',
              'month',
              c.static_month,
              a.refund_reason,
@@ -209,7 +209,7 @@ BEGIN
           on a.add_date = c.full_date_key
        where extract(month from full_date_key) = extract(month from v_date)
          and extract(year from full_date_key) = extract(year from v_date)
-       group by '质量问题', 'month', c.static_month, a.refund_reason;
+       group by '璐ㄩ噺闂', 'month', c.static_month, a.refund_reason;
     commit;
   
   
@@ -256,13 +256,6 @@ BEGIN
       EXIT;
     END IF;
   END LOOP;
-
-  sis_dw.etl_md_etl_log_detail(v_etl_number,
-                               'DM_ORDER_REFUND_CNT_RATE',
-                               '',
-                               v_insert,
-                               v_update,
-                               v_delete);
 
 EXCEPTION
   WHEN OTHERS THEN

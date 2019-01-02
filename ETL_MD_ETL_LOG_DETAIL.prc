@@ -2,25 +2,38 @@
 created at 2018-12-29
 This is the log etl for the framework, every etl script should run in it.
 Every execution will insert one record to our detail table.
-The location will 
+用于插入每次etl运行信息的etl日志脚本。
 */
 CREATE OR REPLACE
-procedure etl_md_etl_log_detail(
-v_etl_number int,
-v_etl_name varchar2,
-SQLERRM varchar2,
-v_insert int,
-v_update int,
-v_delete int				  
-) as
-
+PROCEDURE etl_md_etl_log_detail(
+	v_etl_number INT,
+	v_etl_name VARCHAR2,
+	SQLERRM VARCHAR2,
+	v_insert INT,
+	v_update INT,
+	v_delete INT
+) AS
 BEGIN
-	INSERT into dw_log_detail 
-		(etl_number, etl_name, SQLERRM, v_insert, v_update, v_delete, create_time)
-		values (v_etl_number, v_etl_name, SQLERRM, v_insert, v_update, v_delete, SYSDATE);
-	commit;
-END etl_md_etl_log_detail;
-
+	INSERT INTO dw_log_detail(
+		etl_number,
+		etl_name,
+		SQLERRM,
+		v_insert,
+		v_update,
+		v_delete,
+		create_time
+	)
+VALUES
+	(
+		v_etl_number,
+		v_etl_name,
+		SQLERRM,
+		v_insert,
+		v_update,
+		v_delete,
+		SYSDATE
+	) ; COMMIT ;
+END etl_md_etl_log_detail ;
 
 /*
 create table dw_log_detail(
