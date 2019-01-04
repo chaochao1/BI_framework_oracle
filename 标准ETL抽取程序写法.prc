@@ -14,7 +14,7 @@ create or replace procedure procedureName(start_time   date,
 
 BEGIN
   LOOP
-    //wo need to justify the attribute of this procedure set value 
+    //this is the time-based etl procedure 
 
     //success will insert the value to the dw_log_detail for each date.
     //every execution should insert one record to the detail table
@@ -28,9 +28,7 @@ BEGIN
                                  v_delete);
 
     v_date := v_date + 1;
-    IF v_date > end_time THEN
-      EXIT;
-    END IF;
+    EXIT WHEN v_date > end_time;
   END LOOP;
 
 
