@@ -37,7 +37,7 @@ EXCEPTION
   WHEN OTHERS THEN
     etl_md_etl_log_detail(      v_etl_number,
                                 procedureName,
-                                'fail',
+                                SQLERRM,
                                 v_insert,
                                 v_update,
                                 v_delete);
