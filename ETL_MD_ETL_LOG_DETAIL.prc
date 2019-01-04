@@ -8,7 +8,8 @@ CREATE OR REPLACE
 PROCEDURE etl_md_etl_log_detail(
 	v_etl_number INT,
 	v_etl_name VARCHAR2,
-	SQLERRM VARCHAR2,
+	v_error_code VARCHAR2,
+	v_error_message VARCHAR2,
 	v_insert INT,
 	v_update INT,
 	v_delete INT
@@ -17,7 +18,8 @@ BEGIN
 	INSERT INTO dw_log_detail(
 		etl_number,
 		etl_name,
-		SQLERRM,
+		error_code,
+		error_message,
 		v_insert,
 		v_update,
 		v_delete,
@@ -27,7 +29,8 @@ VALUES
 	(
 		v_etl_number,
 		v_etl_name,
-		SQLERRM,
+		v_error_code,
+		v_error_message,
 		v_insert,
 		v_update,
 		v_delete,
@@ -40,7 +43,8 @@ create table dw_log_detail(
 	id int  constraint pk_id primary key,
 	etl_number int,
 	etl_name varchar2(2000),
-	SQLERRM varchar2(1000),
+	error_code varchar2(50),
+	error_message varchar2(1000),
 	v_insert int,
 	v_update int,
 	v_delete int,

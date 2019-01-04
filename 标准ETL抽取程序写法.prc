@@ -7,6 +7,7 @@ create or replace procedure procedureName(start_time   date,
     this is the principle of etl_md_etl_log_detail
     */
     v_sql               VARCHAR2(1000);
+    status_code         VARCHAR2(100);
     status_flag         VARCHAR2(1000);
     v_insert            INT := 0;
     v_update            INT := 0;
@@ -18,10 +19,12 @@ BEGIN
 
     //success will insert the value to the dw_log_detail for each date.
     //every execution should insert one record to the detail table
-    set status_flag = 'success'; //set it when this is done
+    set status_code := '1';
+    set status_flag := 'success'; //set it when this is done
     etl_md_etl_log_detail(v_etl_number,
                                  'name' ||
                                  to_char(v_date, 'yyyymmdd'),//procedureName + 日期
+                                 status_code,
                                  status_flag,   //status_flag
                                  v_insert,
                                  v_update,
@@ -37,6 +40,7 @@ EXCEPTION
   WHEN OTHERS THEN
     etl_md_etl_log_detail(      v_etl_number,
                                 procedureName,
+                                SQLCODE
                                 SQLERRM,
                                 v_insert,
                                 v_update,
