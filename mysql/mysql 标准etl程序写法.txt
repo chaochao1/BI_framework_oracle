@@ -1,0 +1,24 @@
+##过渡期 mysql 数据仓库etl标准写法
+CREATE DEFINER=`bi`@`%` PROCEDURE `procedure name`(start_time date,
+end_time date,
+v_etl_number int,
+inout status_flag  varchar(10))
+BEGIN
+
+
+declare v_date date;
+set v_date=start_time;
+set status_flag='success';
+
+loop_label:loop
+
+set v_date=date_add(v_date, INTERVAL 1 day) ;
+if v_date>end_time then 
+    leave loop_label;
+end if;
+end loop;
+
+set status_flag='success';
+
+
+END
